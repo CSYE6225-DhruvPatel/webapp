@@ -37,7 +37,7 @@ jobs:
           echo DBNAME=${{ vars.DBNAME }} >> .env
           echo USERNAME=${{ vars.USERNAME }} >> .env
           echo PASSWORD=${{ secrets.PASSWORD }} >> .env
-          echo DBDIALECT=$DBDIALECT{{ vars.DBDIALECT}} >> .env
+          echo DBDIALECT=${{ vars.DBDIALECT }} >> .env
       - run: npm ci
       - run: npm run test
         env:
