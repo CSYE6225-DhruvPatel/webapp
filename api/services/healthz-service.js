@@ -5,7 +5,8 @@ dotenv.config();
 
 const sequelize = new Sequelize(String(process.env.DBNAME), String(process.env.USERNAME), String(process.env.PASSWORD), {
     host: String(process.env.HOST),
-    dialect: 'postgres',
+    // @ts-ignore
+    dialect: process.env.DBDIALECT,
 });
 
 
