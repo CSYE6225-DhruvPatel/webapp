@@ -14,4 +14,4 @@ jobs:
       run: npm install
 
     - name: Run Tests
-      run: node tests.js
+      run: node test/tests.js
