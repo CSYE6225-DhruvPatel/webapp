@@ -27,12 +27,10 @@ export const authenticate = async (req, res, next) => {
         }
     
         const authenticateHeader = username && password ? {} : { "WWW-Authenticate": 'Basic realm="Access to the staging site", charset="UTF-8"' };
-        // @ts-ignore
         sendResponse({req, res, status: 401, headers: authenticateHeader, err: new Error('Authentication failed') }) 
 
     } catch (err) {
         console.log(err.message)
-        // @ts-ignore
         sendResponse({req, res, status: 400, err: new Error('Bad Request') }) 
     }
 }
