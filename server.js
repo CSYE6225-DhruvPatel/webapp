@@ -1,5 +1,5 @@
 import app from './api/app.js';
-import { bootstrapdb } from './api/sequelize.js';
+import { bootstrapdb } from './api/dao/sequelize.js';
 
 const port = process.env.PORT || 8080;
 
