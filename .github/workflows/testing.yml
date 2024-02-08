@@ -6,7 +6,7 @@ name: testing
 on:
   workflow_dispatch:
   pull_request:
-    branches: [main]
+    branches: [test]
 
 jobs:
   unit_tests:
