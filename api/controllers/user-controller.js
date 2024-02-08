@@ -12,9 +12,10 @@ export const create = async (req, res) => {
 
 export const get = async (req, res) => {
     try {
-        const user = await userService.getUserByName(req.body.username);
+        const user = await userService.getUserByName(req.user.username);
         sendResponse({ req, res, status: 200, data: user});
     } catch (err) {
+        console.log(err.message)
         sendResponse({ req, res, status: 400});
     }
 }
