@@ -1,5 +1,3 @@
-const { alwaysTrue, alwaysFalse } = require('./tests');
-
 test('alwaysTrue function returns true', () => {
   expect(alwaysTrue()).toBe(true);
 });
@@ -12,6 +10,6 @@ function alwaysTrue() {
   return true;
 }
 
-// function alwaysFalse() {
-//   return false;
-// }
+function alwaysFalse() {
+  return false;
+}
