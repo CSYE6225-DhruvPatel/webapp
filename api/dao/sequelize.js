@@ -5,20 +5,24 @@ import { Sequelize } from "sequelize";
 // Load the environment variables
 dotenv.config();
 
-const sequelize = new Sequelize(String(process.env.DBNAME), String(process.env.USERNAME), String(process.env.PASSWORD), {
+const sequelizeInstance = new Sequelize(String(process.env.DBNAME), String(process.env.USERNAME), String(process.env.PASSWORD), {
     host: String(process.env.HOST),
     dialect: process.env.DBDIALECT,
 });
 
 // Define models
-export const User = UserModel(sequelize);
+export const User = UserModel(sequelizeInstance);
 
-export const db = sequelize;
+export const db = sequelizeInstance;
+
+export const authenticateDbConnection = async () => { 
+    await sequelizeInstance.authenticate(); 
+}
 
 export const bootstrapdb = async () => {
     try {
-        await sequelize.authenticate();
-        await sequelize.sync({ alter: true });
+        await authenticateDbConnection();
+        await sequelizeInstance.sync({ alter: true });
         console.log('Database bootstrapped successfully');
     } catch (error) {
         console.error('Error bootstrapping database:', error);
