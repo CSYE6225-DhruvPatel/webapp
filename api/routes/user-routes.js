@@ -8,9 +8,16 @@ import { cehckValidSchemaForPut, checkValidSchemaForPost } from '../middleware/c
 
 const Router = express.Router();
 
-const schema = [
+const schema_put = [
     "first_name",
     "last_name",
+    "password"
+]
+
+const schema_post = [
+    "first_name",
+    "last_name",
+    "username",
     "password"
 ]
 
@@ -18,7 +25,7 @@ const ignore = ["account_created", "account_updated"]
 
 Router.route('/self')
     .get(checkDbHealth, authenticate, checkPayloadIsEmpty,userController.get)
-    .put(checkDbHealth, authenticate, cehckValidSchemaForPut(schema, ignore), userController.put)
+    .put(checkDbHealth, authenticate, cehckValidSchemaForPut(schema_put, ignore), userController.put)
     .all((req, res) => {
         console.log('Method not allowed - status 405.')
         sendResponse({req, res, status: 405})
@@ -26,7 +33,7 @@ Router.route('/self')
 
 
 Router.route('/')
-    .post(checkDbHealth, checkValidSchemaForPost(schema, ignore), userController.create)
+    .post(checkDbHealth, checkValidSchemaForPost(schema_post, ignore), userController.create)
     .all((req, res) => {
         console.log('Method not allowed - status 405.')
         sendResponse({req, res, status: 405})
