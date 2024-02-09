@@ -1,18 +1,11 @@
-import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
+import { daoAuthenticateDbConnection } from '../dao/healthz-dao.js';
 
 dotenv.config();
 
-const sequelize = new Sequelize(String(process.env.DBNAME), String(process.env.USERNAME), String(process.env.PASSWORD), {
-    host: String(process.env.HOST),
-    // @ts-ignore
-    dialect: process.env.DBDIALECT,
-});
-
-
 export const getConnection = async () => {
     try {
-      await sequelize.authenticate();
+      await daoAuthenticateDbConnection();
       return {
           status: 200,
       }

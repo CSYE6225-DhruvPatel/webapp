@@ -11,6 +11,12 @@ dotenv.config();
 //Create express app
 const app = express();
 
+app.use((req, res, next) => {
+    if(req.url === '/healthz' && req.method === 'OPTIONS') {
+        return res.status(405).send();
+    }
+    return next();
+})
 //Add middleware
 app.use(cacheNoStore);
 app.use(express.json());
