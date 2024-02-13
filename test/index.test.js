@@ -7,7 +7,7 @@ test('alwaysFalse function returns false', () => {
 });
 
 function alwaysTrue() {
-  return true;
+  return false;
 }
 
 function alwaysFalse() {
