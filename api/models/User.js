@@ -10,14 +10,23 @@ export const UserModel = (sequelize) => {
         first_name: {
             type: DataTypes.STRING,
             allowNull: false,
+            validate: {
+                notEmpty: true,
+            }
         }, 
         last_name: {
             type: DataTypes.STRING,
             allowNull: false,
+            validate: {
+                notEmpty: true,
+            }
         },
         password: {
             type: DataTypes.STRING,
             allowNull: false,
+            validate: {
+                notEmpty: true,
+            }
         },
         username: {
             type: DataTypes.STRING,
