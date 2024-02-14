@@ -8,7 +8,7 @@ import { bootstrapdb } from '../api/dao/sequelize';
 describe('User Routes', () => {
   let server;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     server = app.listen();
     await bootstrapdb();
   });
