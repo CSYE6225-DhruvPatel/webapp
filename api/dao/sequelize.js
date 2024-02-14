@@ -7,7 +7,7 @@ dotenv.config();
 
 const sequelizeInstance = new Sequelize(String(process.env.DBNAME), String(process.env.USERNAME), String(process.env.PASSWORD), {
     host: String(process.env.HOST),
-    dialect: process.env.DBDIALECT,
+    dialect: "postgres",
 });
 
 // Define models
