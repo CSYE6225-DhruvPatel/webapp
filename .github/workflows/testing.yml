@@ -31,5 +31,8 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
+    - name: Install Postgres Manually
+      run: npm install pg
+
     - name: Run Tests
       run: npm test
