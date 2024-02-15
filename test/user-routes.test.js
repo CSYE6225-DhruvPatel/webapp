@@ -3,14 +3,15 @@ import app from '../api/app';
 import { bootstrapdb } from '../api/dao/sequelize';
 
 
-
+beforeAll(async() => {
+  await bootstrapdb();
+})
 
 describe('User Routes', () => {
   let server;
 
-  beforeAll(async () => {
+  beforeAll(() => {
     server = app.listen();
-    await bootstrapdb();
   });
 
   afterAll((done) => {
