@@ -24,6 +24,14 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
+    - name: "create environment varible"
+      run: |
+        touch .env
+        echo HOST=${{ secrets.HOST }} >> .env
+        echo DBNAME=${{ secrets.DBNAME}} >> .env
+        echo USERNAME=${{ secrets.USERNAME }} >> .env
+        echo PASSWORD=${{ secrets.PASSWORD }} >> .env
+
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
