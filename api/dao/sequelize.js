@@ -6,7 +6,7 @@ import { Sequelize } from "sequelize";
 dotenv.config();
 
 const sequelizeInstance = new Sequelize(String(process.env.DBNAME), String(process.env.USERNAME), String(process.env.PASSWORD), {
-    host: String(process.env.HOST),
+    host: "localhost",
     dialect: "postgres",
 });
 
