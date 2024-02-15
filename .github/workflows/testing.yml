@@ -13,9 +13,10 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: ${{ secrets.USERNAME }}
+          POSTGRES_USER: ${{ var.USERNAME }}
           POSTGRES_PASSWORD: ${{ secrets.PASSWORD }}
-          POSTGRES_DB: test_database
+          POSTGRES_DB: ${{ var.DBNAME }}
+          POSTGRES_HOST: ${{ var.HOST }}
         ports:
           - 5432:5432
 
