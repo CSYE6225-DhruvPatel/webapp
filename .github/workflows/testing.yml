@@ -16,7 +16,6 @@ jobs:
           POSTGRES_USER: ${{ secrets.USERNAME }}
           POSTGRES_PASSWORD: ${{ secrets.PASSWORD }}
           POSTGRES_DB: ${{ secrets.DBNAME }}
-          POSTGRES_HOST: ${{ secrets.HOST }}
         ports:
           - 5432:5432
 
@@ -27,7 +26,6 @@ jobs:
     - name: "create environment varible"
       run: |
         touch .env
-        echo HOST=${{ secrets.HOST }} >> .env
         echo DBNAME=${{ secrets.DBNAME}} >> .env
         echo USERNAME=${{ secrets.USERNAME }} >> .env
         echo PASSWORD=${{ secrets.PASSWORD }} >> .env
