@@ -1,4 +1,4 @@
-# webapp 
+# web
 
 ## Setup .env file in the root directory of the project with the following variables: 
 ```
