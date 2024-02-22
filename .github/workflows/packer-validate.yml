@@ -19,6 +19,17 @@ jobs:
     
     - name: Create Repository Zip
       run: zip -r webapp.zip .
+    
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v2'
+
+    - name: 'Use gcloud CLI'
+      run: 'gcloud info'
       
     - name: Packer Validate
       run: packer validate -var 'project_id=${{ secrets.GCP_PROJECT_NAME }}' ./packer/gcp.pkr.hcl

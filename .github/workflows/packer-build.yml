@@ -36,13 +36,16 @@ jobs:
     - name: Create Repository Zip with .env
       run: zip -r webapp.zip .env *
 
-    - name: Set up Google Cloud credentials
-      run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > gcp-key.json
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
 
-    - name: Authenticate with GCP
-      run: gcloud auth activate-service-account --key-file=gcp-key.json
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS: ./gcp-key.json
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v2'
+
+    - name: 'Use gcloud CLI'
+      run: 'gcloud info'
 
     - name: Run Packer Build
       run: |
