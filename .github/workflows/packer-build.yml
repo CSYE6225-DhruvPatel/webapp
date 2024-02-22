@@ -1,0 +1,54 @@
+name: Build Packer Image
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Upload Repository Zip
+      uses: actions/upload-artifact@v2
+      with:
+        name: webapp
+        path: webapp.zip
+
+    - name: Download Repository Zip
+      uses: actions/download-artifact@v2
+      with:
+        name: webapp
+
+    - name: Setup Environment Variables
+      run: |
+        touch webapp/.env
+        echo "HOST=${{ secrets.HOST }}" >> webapp/.env
+        echo "DBNAME=${{ secrets.DBNAME }}" >> webapp/.env
+        echo "USERNAME=${{ secrets.USERNAME }}" >> webapp/.env
+        echo "PASSWORD=${{ secrets.PASSWORD }}" >> webapp/.env
+    
+    - name: Create Repository Zip with .env
+      run: zip -r webapp.zip .env *
+
+    - name: Setup Packer
+      uses: hashicorp/setup-packer@v1
+      with:
+        packer_version: '1.7.5'
+
+    - name: Set up Google Cloud credentials
+      run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > gcp-key.json
+
+    - name: Authenticate with GCP
+      run: gcloud auth activate-service-account --key-file=gcp-key.json
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ./gcp-key.json
+
+    - name: Run Packer Build
+      run: |
+        packer build -var 'project_id='${{ secrets.GCP_PROJECT_NAME }} packer/gcp.pkr.hcl
