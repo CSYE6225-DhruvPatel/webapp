@@ -36,11 +36,6 @@ jobs:
     - name: Create Repository Zip with .env
       run: zip -r webapp.zip .env *
 
-    - name: Setup Packer
-      uses: hashicorp/setup-packer@v1
-      with:
-        packer_version: '1.7.5'
-
     - name: Set up Google Cloud credentials
       run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > gcp-key.json
 
