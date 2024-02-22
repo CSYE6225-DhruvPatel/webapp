@@ -47,6 +47,12 @@ jobs:
     - name: 'Use gcloud CLI'
       run: 'gcloud info'
 
+    - name: 'Setup Packer Gcloud Plugin'
+      run: 'packer plugins install github.com/hashicorp/googlecompute'
+    
+    - name: Packer Init
+      run: packer init ./packer/gcp.pkr.hcl
+
     - name: Run Packer Build
       run: |
         packer build -var 'project_id='${{ secrets.GCP_PROJECT_NAME }} packer/gcp.pkr.hcl
