@@ -15,14 +15,14 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Packer Init
-      run: packer init
+      run: packer init ./packer/gcp.pkr.hcl
       
     - name: Packer Validate
-      run: packer validate
+      run: packer validate ./packer/gcp.pkr.hcl
     
     - name: Run packer fmt
       run: |
-        if ! packer fmt -check; then
+        if ! packer fmt -check ./packer/gcp.pkr.hcl; then
         echo "Failed - Packer fmt"
         exit 1
         fi
