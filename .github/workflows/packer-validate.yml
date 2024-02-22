@@ -16,9 +16,12 @@ jobs:
 
     - name: Packer Init
       run: packer init ./packer/gcp.pkr.hcl
+    
+    - name: Create Repository Zip
+      run: zip -r webapp.zip .
       
     - name: Packer Validate
-      run: packer validate ./packer/gcp.pkr.hcl
+      run: packer validate -var 'project_id=${{ secrets.GCP_PROJECT_NAME }}' ./packer/gcp.pkr.hcl
     
     - name: Run packer fmt
       run: |
