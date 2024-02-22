@@ -1,0 +1,33 @@
+name: Packer Checks
+
+on: 
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+
+jobs:
+  packer:
+    name: Validate Packer Configuration
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup Packer
+      uses: hashicorp/setup-packer@v1
+      with:
+        packer_version: '1.0.0'
+
+    - name: Packer Init
+      run: packer init
+      
+    - name: Packer Validate
+      run: packer validate
+    
+    - name: Run packer fmt
+      run: |
+        if ! packer fmt -check; then
+        echo "Failed - Packer fmt"
+        exit 1
+        fi
