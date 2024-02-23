@@ -34,11 +34,6 @@ build {
   }
 
   provisioner "file" {
-    source      = "packer/postgres.sh"
-    destination = "/dhruv/postgres.sh"
-  }
-
-  provisioner "file" {
     source      = "packer/setup-npm.sh"
     destination = "/dhruv/setup-npm.sh"
   }
