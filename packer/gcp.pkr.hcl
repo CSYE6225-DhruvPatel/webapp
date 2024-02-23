@@ -11,31 +11,24 @@ source "googlecompute" "centos" {
 build {
   sources = ["source.googlecompute.centos"]
 
-  provisioner "shell" {
-    inline = [
-      "mkdir dhruv",
-      "cd dhruv"
-    ]
-  }
-
   provisioner "file" {
     source      = "webapp.zip"
-    destination = "/dhruv/webapp.zip"
+    destination = "/tmp/webapp.zip"
   }
 
   provisioner "file" {
     source      = "./packer/execute.service"
-    destination = "/dhruv/execute.service"
+    destination = "/tmp/execute.service"
   }
 
   provisioner "file" {
     source      = "packer/install-script.sh"
-    destination = "/dhruv/install-script.sh"
+    destination = "/tmp/install-script.sh"
   }
 
   provisioner "file" {
     source      = "packer/setup-npm.sh"
-    destination = "/dhruv/setup-npm.sh"
+    destination = "/tmp/setup-npm.sh"
   }
 
 }

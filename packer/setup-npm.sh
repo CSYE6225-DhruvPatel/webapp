@@ -7,7 +7,7 @@ mkdir csye6225
 sudo chown -R csye6225:csye6225 /opt/csye6225/
 sudo chmod -R 755 /opt/csye6225/
 
-sudo cp /dhruv/webapp.zip /opt/csye6225/webapp.zip
+sudo cp /tmp/webapp.zip /opt/csye6225/webapp.zip
 
 sudo su - csye6225
 cd /opt/csye6225 || exit
@@ -16,7 +16,7 @@ cd webapp/ || exit
 
 sudo npm install
 
-sudo cp /dhruv/execute.service /etc/systemd/system/execute.service
+sudo cp /tmp/execute.service /etc/systemd/system/execute.service
 
 sudo systemctl daemon-reload
 sudo systemctl enable execute

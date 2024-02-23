@@ -6,12 +6,12 @@ sudo dnf clean all -y
 sudo dnf install unzip -y
 sudo sudo yum install -y unzip
 
-chmod +x /dhruv/install-script.sh
-/dhruv/install-script.sh
-chmod +x /dhruv/postgres.sh
-/dhruv/postgres.sh
-chmod +x /dhruv/setup-npm.sh
-/dhruv/setup-npm.sh
+chmod +x /tmp/install-script.sh
+/tmp/install-script.sh
+chmod +x /tmp/postgres.sh
+/tmp/postgres.sh
+chmod +x /tmp/setup-npm.sh
+/tmp/setup-npm.sh
 
 echo '---Install nodeJs'
 sudo dnf module reset nodejs
