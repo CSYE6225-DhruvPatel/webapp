@@ -7,7 +7,43 @@ on:
       - main
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: ${{ secrets.USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DBNAME }}
+        ports:
+          - 5432:5432
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: "create environment varible"
+      run: |
+        touch .env
+        echo DBNAME=${{ secrets.DBNAME}} >> .env
+        echo USERNAME=${{ secrets.USERNAME }} >> .env
+        echo PASSWORD=${{ secrets.PASSWORD }} >> .env
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Run Tests
+      run: npm test
+
   build:
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
