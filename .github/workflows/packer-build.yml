@@ -50,17 +50,6 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Upload Repository Zip
-      uses: actions/upload-artifact@v2
-      with:
-        name: webapp
-        path: webapp.zip
-
-    - name: Download Repository Zip
-      uses: actions/download-artifact@v2
-      with:
-        name: webapp
-
     - name: Setup Environment Variables
       run: |
         touch webapp/.env
