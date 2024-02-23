@@ -52,11 +52,11 @@ jobs:
 
     - name: Setup Environment Variables
       run: |
-        touch webapp/.env
-        echo "HOST=${{ secrets.HOST }}" >> webapp/.env
-        echo "DBNAME=${{ secrets.DBNAME }}" >> webapp/.env
-        echo "USERNAME=${{ secrets.USERNAME }}" >> webapp/.env
-        echo "PASSWORD=${{ secrets.PASSWORD }}" >> webapp/.env
+        touch .env
+        echo "HOST=${{ secrets.HOST }}" >> .env
+        echo "DBNAME=${{ secrets.DBNAME }}" >> .env
+        echo "USERNAME=${{ secrets.USERNAME }}" >> .env
+        echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
     
     - name: Create Repository Zip with .env
       run: zip -r webapp.zip .env *
