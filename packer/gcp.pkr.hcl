@@ -1,4 +1,4 @@
-variable "project_id" {}
+
 
 source "googlecompute" "centos" {
   project_id          =    var.project_id
