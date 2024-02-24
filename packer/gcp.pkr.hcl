@@ -1,7 +1,7 @@
 variable "project_id" {}
 
 source "googlecompute" "centos" {
-  project_id          = var.project_id
+  project_id          =    var.project_id
   source_image_family = "centos-stream-8"
   zone                = "us-central1-a"
   machine_type        = "n1-standard-1"
