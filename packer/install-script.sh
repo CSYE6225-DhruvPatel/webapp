@@ -6,13 +6,6 @@ sudo dnf clean all -y
 sudo dnf install unzip -y
 sudo sudo yum install -y unzip
 
-chmod +x /tmp/install-script.sh
-/tmp/install-script.sh
-chmod +x /tmp/postgres.sh
-/tmp/postgres.sh
-chmod +x /tmp/setup-npm.sh
-/tmp/setup-npm.sh
-
 echo '---Install nodeJs'
 sudo dnf module reset nodejs
 sudo dnf -y module enable nodejs:20
