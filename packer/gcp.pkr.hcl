@@ -35,8 +35,6 @@ build {
     inline = [
       "chmod +x /tmp/install-script.sh",
       "/tmp/install-script.sh",
-      "chmod +x /tmp/postgres.sh",
-      "/tmp/postgres.sh",
       "chmod +x /tmp/setup-npm.sh",
       "/tmp/setup-npm.sh"
     ]

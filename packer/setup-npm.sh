@@ -11,10 +11,11 @@ sudo cp /tmp/webapp.zip /opt/csye6225/webapp.zip
 
 sudo su - csye6225
 cd /opt/csye6225 || exit
-sudo unzip webapp.zip -d webapp
+sudo unzip webapp.zip
 cd webapp/ || exit
 
 sudo npm install
+sudo npm i pg
 
 sudo cp /tmp/execute.service /etc/systemd/system/execute.service
 
