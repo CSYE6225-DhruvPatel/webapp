@@ -15,6 +15,7 @@ sudo unzip webapp.zip -d webapp
 cd webapp/ || exit
 
 sudo npm install
+sudo npm i pg
 
 sudo cp /tmp/execute.service /etc/systemd/system/execute.service
 
