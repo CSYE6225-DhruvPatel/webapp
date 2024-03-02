@@ -10,19 +10,27 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: ${{ secrets.USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.PASSWORD }}
-          POSTGRES_DB: ${{ secrets.DBNAME }}
-        ports:
-          - 5432:5432
-
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
+
+    - name: Install PostgreSQL
+      run: |
+        sudo apt-get update
+        sudo apt-get install postgresql postgresql-contrib -y
+
+    - name: Start PostgreSQL Service
+      run: sudo service postgresql start
+
+    - name: Verify PostgreSQL Service
+      run: sudo service postgresql status
+
+    - name: Change PostgreSQL Password
+      run: |
+        sudo -u postgres psql -c "ALTER ROLE ${{ secrets.USERNAME }} WITH PASSWORD '${{ secrets.PASSWORD }}';"
+
+    - name: Create Database
+      run: sudo -u ${{ secrets.USERNAME }} psql -c 'CREATE DATABASE ${{ secrets.DBNAME }};'
 
     - name: "create environment varible"
       run: |
@@ -30,6 +38,7 @@ jobs:
         echo DBNAME=${{ secrets.DBNAME}} >> .env
         echo USERNAME=${{ secrets.USERNAME }} >> .env
         echo PASSWORD=${{ secrets.PASSWORD }} >> .env
+        echo DBHOST=${{ secrets.DBHOST }} >> .env
 
     - name: Set up Node.js
       uses: actions/setup-node@v2

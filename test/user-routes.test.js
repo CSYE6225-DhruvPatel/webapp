@@ -43,8 +43,8 @@ describe('User Routes', () => {
 
   test('PUT /v1/user/self updates the user profile', async () => {
     const updatedUserData = {
-      first_name: 'updatedFirstName',
-      last_name: 'updatedLastName'
+      first_name: 'xyz',
+      last_name: 'pqr'
     };
 
     const response = await request(server)
@@ -53,5 +53,13 @@ describe('User Routes', () => {
       .send(updatedUserData);
 
     expect(response.status).toBe(204);
+  });
+
+  test('GET /v1/user/self retrieves the user profile', async () => {
+    const response = await request(server)
+      .get('/v1/user/self')
+      .set('Authorization', `Basic ${Buffer.from('abc@example.com:abc').toString('base64')}`); 
+
+    expect(response.status).toBe(200);
   });
 });
