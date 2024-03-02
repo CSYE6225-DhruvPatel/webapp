@@ -8,8 +8,6 @@ source "googlecompute" "centos" {
   ssh_username        = "centos"
 }
 
-on_error = "abort"
-
 build {
   sources = ["source.googlecompute.centos"]
 
