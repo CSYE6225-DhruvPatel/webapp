@@ -24,6 +24,10 @@ jobs:
     - name: Verify PostgreSQL Service
       run: sudo service postgresql status
 
+    - name: Change PostgreSQL Password
+      run: |
+        sudo -u postgres psql -c "ALTER ROLE ${{ secrets.USERNAME }} WITH PASSWORD '${{ secrets.NEW_PASSWORD }}';"
+
     - name: Create Database
       run: sudo -u ${{ secrets.USERNAME }} psql -c 'CREATE DATABASE ${{ secrets.DBNAME }};'
 
