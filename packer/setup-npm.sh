@@ -13,7 +13,7 @@ sudo chown -R csye6225:csye6225 /var/log/webapp
 sudo chmod -R 770 /var/log/webapp
 
 sudo cp /tmp/webapp.zip /opt/csye6225/webapp.zip
-sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225/
+sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225/webapp
 
 cd /opt/csye6225/webapp
 sudo npm install
