@@ -44,24 +44,3 @@ export async function updateUser(username, user) {
     const updatedUser = await daoUpdateUser(username, user);
     return updatedUser;
 }
-
-// export async function login(username, password) {
-//     try {
-//         const user = await daoGetUserByUsername(username);
-//         if (!user) {
-//             return { success: false, error: 'User not found' };
-//         }
-
-//         const isPasswordValid = await validatePassword(password, user.password);
-
-//         if (!isPasswordValid) {
-//             return { success: false, error: 'Invalid password' };
-//         }
-
-//         // Return user information without the password
-//         delete user.password;
-//         return { success: true, user };
-//     } catch (error) {
-//         return { success: false, error: error.message };
-//     }
-// }
