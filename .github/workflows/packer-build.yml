@@ -51,7 +51,7 @@ jobs:
     - name: Create webapp For log
       run: | 
         sudo mkdir -p /var/log/webapp
-        sudo chmod -R 770 /var/log/webapp
+        sudo chmod -R 776 /var/log/webapp
 
     - name: Run Tests
       run: npm test
@@ -74,11 +74,6 @@ jobs:
     
     - name: Create Repository Zip with .env
       run: zip -r webapp.zip .env *
-
-    - name: Create webapp For log
-      run: | 
-        sudo mkdir -p /var/log/webapp
-        sudo chmod -R 770 /var/log/webapp
 
     - id: 'auth'
       uses: 'google-github-actions/auth@v2'
