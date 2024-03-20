@@ -10,6 +10,6 @@ export const checkDbHealth = async (req, res, next) => {
             sendResponse({ req, res, status: 503});
         }
     } catch (err) {
-        return  sendResponse({req, res, status: 400 }) ;
+        return  sendResponse({req, res, status: 400, err: err}) ;
     }
 }

@@ -3,7 +3,7 @@ variable "project_id" {}
 source "googlecompute" "centos" {
   project_id          = var.project_id
   source_image_family = "centos-stream-8"
-  zone                = "us-central1-a"
+  zone                = "us-west1-a"
   machine_type        = "n1-standard-1"
   ssh_username        = "centos"
 }
@@ -31,10 +31,17 @@ build {
     destination = "/tmp/setup-npm.sh"
   }
 
+  provisioner "file" {
+    source      = "packer/ops-agent.sh"
+    destination = "/tmp/ops-agent.sh"
+  }
+
   provisioner "shell" {
     inline = [
       "chmod +x /tmp/install-script.sh",
       "/tmp/install-script.sh",
+      "chmod +x /tmp/ops-agent.sh",
+      "/tmp/ops-agent.sh",
       "chmod +x /tmp/setup-npm.sh",
       "/tmp/setup-npm.sh"
     ]
