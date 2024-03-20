@@ -17,7 +17,7 @@ logging:
   processors:
     my-app-processor:
       type: parse_json
-      time_key: times
+      time_key: time
       time_format: "%Y-%m-%d %H:%M:%S.%L %Z"
   service:
     pipelines:
