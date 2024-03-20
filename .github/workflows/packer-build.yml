@@ -47,6 +47,11 @@ jobs:
 
     - name: Install Dependencies
       run: npm install
+    
+    - name: Create webapp For log
+      run: | 
+        sudo mkdir -p /var/log/webapp
+        sudo chmod -R 770 /var/log/webapp
 
     - name: Run Tests
       run: npm test
