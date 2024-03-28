@@ -5,6 +5,7 @@ import { sendResponse } from '../utils/response.js';
 import { checkDbHealth } from '../middleware/check-db-health.js';
 import { checkPayloadIsEmpty } from '../middleware/payload.js';
 import { cehckValidSchemaForPut, checkValidSchemaForPost } from '../middleware/check-json-schema.js';
+import { checkEmailIsVerified } from '../middleware/check-user-is-verified.js';
 
 const Router = express.Router();
 
@@ -24,8 +25,8 @@ const schema_post = [
 const ignore = ["account_created", "account_updated"]
 
 Router.route('/self')
-    .get(checkDbHealth, authenticate, checkPayloadIsEmpty,userController.get)
-    .put(checkDbHealth, authenticate, cehckValidSchemaForPut(schema_put, ignore), userController.put)
+    .get(checkDbHealth, authenticate, checkPayloadIsEmpty, checkEmailIsVerified, userController.get)
+    .put(checkDbHealth, authenticate, cehckValidSchemaForPut(schema_put, ignore), checkEmailIsVerified, userController.put)
     .all((req, res) => {
         console.log('Method not allowed - status 405.')
         sendResponse({req, res, status: 405})

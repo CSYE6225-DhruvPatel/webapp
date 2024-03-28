@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { UserModel } from "../models/User.js";
+import { VerifyEmailModel } from "../models/VerifyEmail.js";
 import { Sequelize } from "sequelize";
 
 // Load the environment variables
@@ -12,6 +13,7 @@ const sequelizeInstance = new Sequelize(String(process.env.DBNAME), String(proce
 
 // Define models
 export const User = UserModel(sequelizeInstance);
+export const VerifyEmail = VerifyEmailModel(sequelizeInstance);
 
 export const db = sequelizeInstance;
 
