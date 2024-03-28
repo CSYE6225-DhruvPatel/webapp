@@ -10,7 +10,7 @@ export const verify = async (req, res) => {
             sendResponse({ req, res, status })
         } else if (status === 410) {
             console.log('verify email status code returned: ', status)
-            sendResponse({ req, res, status: 410})
+            sendResponse({ req, res, status: 410, data: {message: "Link expired"}})
         } else {
             console.log('Email verification service unavailable: ', status)
             sendResponse({ req, res, status: 503})
