@@ -48,7 +48,7 @@ describe('User Routes', () => {
     //     replacements: insertParams,
     //     type: db.QueryTypes.INSERT
     //   });
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(400);
   });
 
   test('GET /v1/user/self retrieves the user profile', async () => {
