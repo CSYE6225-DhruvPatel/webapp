@@ -20,5 +20,5 @@ export const daoUpdateVerifyEmailRecord = async (username) => {
             where: { username }
         }
     );
-    return result?.dataValues;
+    return result;
 }

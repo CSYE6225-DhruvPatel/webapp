@@ -15,7 +15,6 @@ export const get = async (req, res) => {
         const user = await userService.getUserByUsername(req.user.username);
         sendResponse({ req, res, status: 200, data: user, msg: 'User recieved successfully.'});
     } catch (error) {
-        console.log(err.message)
         sendResponse({ req, res, status: 400, err: error, msg: 'Error while getting user.'});
     }
 }

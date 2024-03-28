@@ -30,7 +30,6 @@ export const authenticate = async (req, res, next) => {
         sendResponse({req, res, status: 401, headers: authenticateHeader, err: new Error('Authentication failed') }) 
 
     } catch (err) {
-        console.log(err.message)
         sendResponse({req, res, status: 400, err: new Error('Bad Request') }) 
     }
 }
