@@ -1,5 +1,6 @@
 import { daoGetUserByUsername, daoCreateUser, daoUpdateUser } from "../dao/user-dao.js";
 import { hashPassword, validatePassword } from "../utils/bcrypt.js";
+import { publishUserData } from "../utils/pubsub.js";
 
 export async function authenticateUser({ username, password }) {
     let userId = null;
@@ -30,6 +31,7 @@ export async function createUser(user) {
     // Remove sensitive data before returning
     if (createdUser) {
         delete createdUser.password;
+        await publishUserData({userData: createdUser});
     }
 
     return createdUser;
