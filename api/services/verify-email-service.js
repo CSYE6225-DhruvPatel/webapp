@@ -6,7 +6,7 @@ dotenv.config();
 export const getEmailVerification = async (username) => {
     try {
         var emailVerificationDetails = await daoGetVerifyEmailRecord(username);
-        if((Date.now() - emailVerificationDetails.email_sent.getTime())/(1000 * 60) < 2){
+        if(Date.now() < Math.floor(emailVerificationDetails.link_expiry_time.getTime()/1000)){
           console.log("User verified succefully!")
           var res = await daoUpdateVerifyEmailRecord(username);
           if(res){
