@@ -17,7 +17,7 @@ export const VerifyEmailModel = (sequelize) => {
             defaultValue: false
         }
     }, {
-        createdAt: 'email_sent',
+        createdAt: 'link_expiry_time',
         updatedAt: 'account_updated',
     });
     return VerifyEmail;
