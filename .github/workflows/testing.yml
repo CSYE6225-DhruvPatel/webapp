@@ -41,23 +41,20 @@ jobs:
     - name: Packer Init
       run: packer init ./packer/gcp.pkr.hcl
 
-    - name: Run Packer Build
-      run: |
-        packer build -var 'project_id='${{ secrets.GCP_PROJECT_NAME }} packer/gcp.pkr.hcl
-
     - name: Build Packer Image
       run: |
-        IMAGE_ID=$(packer build -var 'project_id='${{ secrets.GCP_PROJECT_NAME }} packer/gcp.pkr.hcl | grep "artifact_id" | awk '{print $2}')
-        echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+        OUTPUT=$(packer build -var 'project_id='${{ secrets.GCP_PROJECT_NAME }} packer/gcp.pkr.hcl)
+          IMAGE_ID=$(echo "$OUTPUT" | sed -n 's/.*: \(packer-[0-9]*\)/\1/p')
+          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
 
     - name: Update Instance Template
       run: |
         gcloud compute instance-templates create new-webapp-template \
           --source-instance-template=google_compute_instance_template.new_webapp_template.name \
           --image=${{ env.IMAGE_ID }} \
-          --machine-type=${var.machine-type} \
-          --region=${var.vpc_region} \
-          --metadata="USERNAME=${google_sql_user.database_user.name},PASSWORD=${google_sql_user.database_user.password},DBNAME=${google_sql_database.database.name},DBHOST=${google_sql_database_instance.cloudsql_instance.private_ip_address},MAILGUN_API_KEY=${var.mailgun_api_key},GCP_PROJECT=${var.project},PUBSUB_TOPIC=${var.pubsub_topic_name}" \
+          --machine-type="e2-standard-2" \
+          --region="us-east4" \
+          --metadata="USERNAME=${google_sql_user.database_user.name},PASSWORD=${google_sql_user.database_user.password},DBNAME=${google_sql_database.database.name},DBHOST=${google_sql_database_instance.cloudsql_instance.private_ip_address},MAILGUN_API_KEY=${{env.mailgun_api_key}},GCP_PROJECT=${{env.GCP_PROJECT}},PUBSUB_TOPIC=${{env.PUBSUB_TOPIC}}" \
           --metadata-from-file=startup-script=./postgres.sh \
           --service-account=${google_service_account.newuser.email} \
           --scopes=cloud-platform \
