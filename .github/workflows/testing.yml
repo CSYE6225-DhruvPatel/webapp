@@ -80,7 +80,7 @@ jobs:
       
     - name: Start Rolling Update
       run: |
-          gcloud compute instance-groups managed rolling-action start-update web-igm \
+          gcloud compute instance-groups managed rolling-action start-update webapp-igm \
           --version=template=new-webapp-template-${{env.RANDOM_NAME}} \
           --zone=us-east4-a
          
