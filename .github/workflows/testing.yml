@@ -46,12 +46,14 @@ jobs:
         OUTPUT=$(packer build -var 'project_id='${{ secrets.GCP_PROJECT_NAME }} packer/gcp.pkr.hcl)
           IMAGE_ID=$(echo "$OUTPUT" | sed -n 's/.*: \(packer-[0-9]*\)/\1/p')
           echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+    
+    - name: Generate Random Name
+      run: |
+          RANDOM_NAME=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 10 | head -n 1)
+          echo "Generated random name: $RANDOM_NAME"
 
     - name: Update Instance Template
       run: |
-          # Generate a random string for the instance template name
-          RANDOM_NAME=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 10 | head -n 1)
-          # Use the random string to create a new instance template
           gcloud compute instance-templates create new-webapp-template-$RANDOM_NAME \
           --machine-type=e2-standard-2 \
           --image=${{env.IMAGE_ID}} \
