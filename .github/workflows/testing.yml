@@ -49,27 +49,54 @@ jobs:
 
     - name: Update Instance Template
       run: |
-        gcloud compute instance-templates create new-webapp-template \
-          --source-instance-template=google_compute_instance_template.new_webapp_template.name \
-          --image=${{ env.IMAGE_ID }} \
-          --machine-type="e2-standard-2" \
-          --region="us-east4" \
-          --metadata="USERNAME=${google_sql_user.database_user.name},PASSWORD=${google_sql_user.database_user.password},DBNAME=${google_sql_database.database.name},DBHOST=${google_sql_database_instance.cloudsql_instance.private_ip_address},MAILGUN_API_KEY=${{env.mailgun_api_key}},GCP_PROJECT=${{env.GCP_PROJECT}},PUBSUB_TOPIC=${{env.PUBSUB_TOPIC}}" \
-          --metadata-from-file=startup-script=./postgres.sh \
-          --service-account=${google_service_account.newuser.email} \
+          # Generate a random string for the instance template name
+          RANDOM_NAME=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 10 | head -n 1)
+          # Use the random string to create a new instance template
+          gcloud compute instance-templates create new-webapp-template-$RANDOM_NAME \
+          --machine-type=e2-standard-2 \
+          --image=${{env.IMAGE_ID}} \
+          --region=us-east4 \
+          --network=vpc1 \
+          --subnet=webapp \
+          --metadata USERNAME=${{env.db_username}},PASSWORD=${{env.db_password}},DBNAME=${{env.db_name}},DBHOST=${{env.db_host}},MAILGUN_API_KEY=${{env.MAILGUN_API_KEY}},GCP_PROJECT=${{env.GCP_PROJECT}},PUBSUB_TOPIC=${{env.PUBSUB_TOPIC}} \
+          --metadata-from-file=startup-script=/packer/postgres.sh \
+          --service-account=newuser@devgcp-415101.iam.gserviceaccount.com \
           --scopes=cloud-platform \
-          --tags=webapp \
+          --tags=webapp
       
     - name: Update Managed Instance Group
       run: |
-        gcloud compute instance-groups managed set-instance-template webapp-igm \
-          --template=new-webapp-template \
+          # Assuming the instance group name is consistent and does not need to be randomized
+          gcloud compute instance-groups managed set-instance-template webapp-igm --template=new-webapp-template-$RANDOM_NAME --zone=us-east4-a
       
     - name: Start Rolling Update
       run: |
-        gcloud compute instance-groups managed rolling-action start-update webapp-igm \
-          --version=new-webapp-template \
-          --type=rolling-out-update \
+          gcloud compute instance-groups managed rolling-action start-update web-igm \
+          --version=template=new-webapp-template-$RANDOM_NAME \
+          --zone=us-east4-a
+         
+    
+    # - name: Wait for Instance Group Update to Complete
+    #   run: |
+    #     # Use gcloud CLI to check the status of the instance group update
+    #     status=$(gcloud compute instance-groups managed describe webapp-igm --zone=us-east4-a --format='value(status)')
+    #     timeout=600 # 10 minutes.
+    #     elapsed=0
+    #     while [[ "$status" != "UPDATE_STATE_NONE" && "$status" != "UPDATE_STATE_ERROR" ]]; do
+    #       sleep 60
+    #       elapsed=$((elapsed + 60))
+    #       if [ $elapsed -ge $timeout ]; then
+    #         echo "Update timed out, treating as cancelled."
+    #         exit 1
+    #       fi
+    #       status=$(gcloud compute instance-groups managed describe webapp-igm --zone=us-east4-a --format='value(status)')
+    #     done
+
+    #     # Exit with an error if the instance group update failed
+    #     if [ "$status" == "UPDATE_STATE_ERROR" ]; then
+    #       exit 1
+    #     fi
+    
     # runs-on: ubuntu-latest
 
     # steps:
