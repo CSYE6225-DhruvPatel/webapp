@@ -134,24 +134,24 @@ jobs:
           --version=template=new-webapp-template-${{env.RANDOM_NAME}} \
           --zone=us-east4-a
     
-          - name: Check Status
-          run: |
-              status=$(gcloud compute instance-groups managed wait-until webapp-igm --region=us-east4 --stable)
-              echo "Status: $status"
-              if [[ $status == "Group is stable" ]]; then
-              echo "Refreshed successfully"
-              break
-              else
-                echo "Refresh Failed"
-                exit 1
-              fi
-              if [ "$status" == "UPDATING" ]; then
-                echo "IGM is still updating..."
-                exit 1
-              fi
-              if [ "$status" == "READY" ]; then
-                echo "IGM is ready!"
-                exit 0
-              fi
-              exit 1
+    - name: Check Status
+      run: |
+          status=$(gcloud compute instance-groups managed wait-until webapp-igm --region=us-east4 --stable)
+          echo "Status: $status"
+          if [[ $status == "Group is stable" ]]; then
+          echo "Refreshed successfully"
+          break
+          else
+            echo "Refresh Failed"
+            exit 1
+          fi
+          if [ "$status" == "UPDATING" ]; then
+            echo "IGM is still updating..."
+            exit 1
+          fi
+          if [ "$status" == "READY" ]; then
+            echo "IGM is ready!"
+            exit 0
+          fi
+          exit 1
         
