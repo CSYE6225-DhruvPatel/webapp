@@ -134,25 +134,46 @@ jobs:
           --version=template=new-webapp-template-${{env.RANDOM_NAME}} \
           --zone=us-east4-a
     
-    - name: Wait for Instance Group Update to Complete
+    - name: Check Status
       run: |
-          MAX_ATTEMPTS=50
-          TIMEOUT=15
-          attempt_counter=0
-          
-          is_reached=$(gcloud compute instance-groups managed describe webapp-igm --zone=us-east4-a --format='value(versionTarget.isReached)')
-          
-          while [[ "$is_reached" != "True" ]]; do
-          if [[ $attempt_counter -ge $MAX_ATTEMPTS ]]; then
-              echo "Maximum attempts reached. Exiting..."
-              exit 1
+          status=$(gcloud compute instance-groups managed wait-until webapp-igm --region=us-east4 --stable)
+          echo "Status: $status"
+          if [[ $status == "Group is stable" ]]; then
+          echo "Refreshed successfully"
+          break
+          else
+            echo "Refresh Failed"
+            exit 1
           fi
+          if [ "$status" == "UPDATING" ]; then
+            echo "IGM is still updating..."
+            exit 1
+          fi
+          if [ "$status" == "READY" ]; then
+            echo "IGM is ready!"
+            exit 0
+          fi
+          exit 1
           
-          ((attempt_counter++))
-          sleep $TIMEOUT
+    # - name: Wait for Instance Group Update to Complete
+    #   run: |
+    #       MAX_ATTEMPTS=50
+    #       TIMEOUT=15
+    #       attempt_counter=0
           
-          is_reached=$(gcloud compute instance-groups managed describe webapp-igm --zone=us-east4-a --format='value(versionTarget.isReached)')
-          done
+    #       is_reached=$(gcloud compute instance-groups managed describe webapp-igm --zone=us-east4-a --format='value(versionTarget.isReached)')
           
-          echo "Instance group update completed successfully."
+    #       while [[ "$is_reached" != "True" ]]; do
+    #       if [[ $attempt_counter -ge $MAX_ATTEMPTS ]]; then
+    #           echo "Maximum attempts reached. Exiting..."
+    #           exit 1
+    #       fi
+          
+    #       ((attempt_counter++))
+    #       sleep $TIMEOUT
+          
+    #       is_reached=$(gcloud compute instance-groups managed describe webapp-igm --zone=us-east4-a --format='value(versionTarget.isReached)')
+    #       done
+          
+    #       echo "Instance group update completed successfully."
         
