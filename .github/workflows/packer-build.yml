@@ -1,127 +1,131 @@
-# name: Build Packer Image
+name: Build Packer Image
 
-# on:
-#   pull_request:
-#     types: [closed]
-#     branches:
-#       - main
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
 
-# jobs:
-#   test:
-#     runs-on: ubuntu-latest
+jobs:
+  test:
+    runs-on: ubuntu-latest
 
-#     steps:
-#     - name: Checkout Repository
-#       uses: actions/checkout@v2
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
 
-#     - name: Install PostgreSQL
-#       run: |
-#         sudo apt-get update
-#         sudo apt-get install postgresql postgresql-contrib -y
+    - name: Install PostgreSQL
+      run: |
+        sudo apt-get update
+        sudo apt-get install postgresql postgresql-contrib -y
 
-#     - name: Start PostgreSQL Service
-#       run: sudo service postgresql start
+    - name: Start PostgreSQL Service
+      run: sudo service postgresql start
 
-#     - name: Verify PostgreSQL Service
-#       run: sudo service postgresql status
+    - name: Verify PostgreSQL Service
+      run: sudo service postgresql status
 
-#     - name: Change PostgreSQL Password
-#       run: |
-#         sudo -u postgres psql -c "ALTER ROLE ${{ secrets.USERNAME }} WITH PASSWORD '${{ secrets.PASSWORD }}';"
+    - name: Change PostgreSQL Password
+      run: |
+        sudo -u postgres psql -c "ALTER ROLE ${{ secrets.USERNAME }} WITH PASSWORD '${{ secrets.PASSWORD }}';"
 
-#     - name: Create Database
-#       run: sudo -u ${{ secrets.USERNAME }} psql -c 'CREATE DATABASE ${{ secrets.DBNAME }};'
+    - name: Create Database
+      run: sudo -u ${{ secrets.USERNAME }} psql -c 'CREATE DATABASE ${{ secrets.DBNAME }};'
 
-#     - name: "create environment varible"
-#       run: |
-#         touch .env
-#         echo DBNAME=${{ secrets.DBNAME}} >> .env
-#         echo USERNAME=${{ secrets.USERNAME }} >> .env
-#         echo PASSWORD=${{ secrets.PASSWORD }} >> .env
-#         echo DBHOST=${{ secrets.DBHOST }} >> .env
+    - name: "create environment varible"
+      run: |
+        touch .env
+        echo DBNAME=${{ secrets.DBNAME}} >> .env
+        echo USERNAME=${{ secrets.USERNAME }} >> .env
+        echo PASSWORD=${{ secrets.PASSWORD }} >> .env
+        echo DBHOST=${{ secrets.DBHOST }} >> .env
 
-#     - name: Set up Node.js
-#       uses: actions/setup-node@v2
-#       with:
-#         node-version: '18'
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
 
-#     - name: Install Dependencies
-#       run: npm install
+    - name: Install Dependencies
+      run: npm install
     
-#     - name: Create webapp For log
-#       run: | 
-#         sudo mkdir -p /var/log/webapp
-#         sudo chmod -R 777 /var/log/webapp
+    - name: Create webapp For log
+      run: | 
+        sudo mkdir -p /var/log/webapp
+        sudo chmod -R 777 /var/log/webapp
 
-#     - name: Run Tests
-#       run: npm test
+    - name: Run Tests
+      run: npm test
 
-#   build:
-#     needs: test
-#     runs-on: ubuntu-latest
+  build:
+    needs: test
+    runs-on: ubuntu-latest
 
-#     steps:
-#     - name: Checkout Repository
-#       uses: actions/checkout@v2
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
 
-#     - name: Setup Environment Variables
-#       run: |
-#         touch .env
-#         echo "HOST=${{ secrets.HOST }}" >> .env
-#         echo "DBNAME=${{ secrets.DBNAME }}" >> .env
-#         echo "USERNAME=${{ secrets.USERNAME }}" >> .env
-#         echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
+    - name: Setup Environment Variables
+      run: |
+        touch .env
+        echo "HOST=${{ secrets.HOST }}" >> .env
+        echo "DBNAME=${{ secrets.DBNAME }}" >> .env
+        echo "USERNAME=${{ secrets.USERNAME }}" >> .env
+        echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
     
-#     - name: Create Repository Zip with .env
-#       run: zip -r webapp.zip .env *
+    - name: Create Repository Zip with .env
+      run: zip -r webapp.zip .env *
 
-#     - id: 'auth'
-#       uses: 'google-github-actions/auth@v2'
-#       with:
-#         credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
 
-#     - name: 'Set up Cloud SDK'
-#       uses: 'google-github-actions/setup-gcloud@v2'
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v2'
 
-#     - name: 'Use gcloud CLI'
-#       run: 'gcloud info'
+    - name: 'Use gcloud CLI'
+      run: 'gcloud info'
 
-#     - name: 'Setup Packer Gcloud Plugin'
-#       run: 'packer plugins install github.com/hashicorp/googlecompute'
+    - name: 'Setup Packer Gcloud Plugin'
+      run: 'packer plugins install github.com/hashicorp/googlecompute'
     
-#     - name: Packer Init
-#       run: packer init ./packer/gcp.pkr.hcl
+    - name: Packer Init
+      run: packer init ./packer/gcp.pkr.hcl
 
-#     - name: Run Packer Build
-#       run: |
-#         packer build -var 'project_id='${{ secrets.GCP_PROJECT_NAME }} packer/gcp.pkr.hcl
-
-#     - name: Build Packer Image
-#       run: |
-#         IMAGE_ID=$(packer build -var 'project_id='${{ secrets.GCP_PROJECT_NAME }} packer/gcp.pkr.hcl | grep "artifact_id" | awk '{print $2}')
-#         echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
-
-#     - name: Update Instance Template
-#       run: |
-#         gcloud compute instance-templates create new-webapp-template \
-#           --source-instance-template=google_compute_instance_template.new_webapp_template.name \
-#           --image=${{ env.IMAGE_ID }} \
-#           --machine-type=${var.machine-type} \
-#           --region=${var.vpc_region} \
-#           --metadata="USERNAME=${google_sql_user.database_user.name},PASSWORD=${google_sql_user.database_user.password},DBNAME=${google_sql_database.database.name},DBHOST=${google_sql_database_instance.cloudsql_instance.private_ip_address},MAILGUN_API_KEY=${var.mailgun_api_key},GCP_PROJECT=${var.project},PUBSUB_TOPIC=${var.pubsub_topic_name}" \
-#           --metadata-from-file=startup-script=./postgres.sh \
-#           --service-account=${google_service_account.newuser.email} \
-#           --scopes=cloud-platform \
-#           --tags=webapp \
+    - name: Build Packer Image
+      run: |
+        OUTPUT=$(packer build -var 'project_id='${{ secrets.GCP_PROJECT_NAME }} packer/gcp.pkr.hcl)
+          IMAGE_ID=$(echo "$OUTPUT" | sed -n 's/.*: \(packer-[0-9]*\)/\1/p')
+          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+    
+    - name: Generate Random Name
+      run: |
+        RANDOM_NAME=$(uuidgen | tr -d '-' | cut -c1-6)
+        echo "Generated random name: $RANDOM_NAME"
+        echo "RANDOM_NAME=$RANDOM_NAME" >> $GITHUB_ENV
+        
+    - name: Update Instance Template
+      run: |
+          gcloud compute instance-templates create new-webapp-template-${{env.RANDOM_NAME}} \
+          --machine-type=e2-standard-2 \
+          --image=${{env.IMAGE_ID}} \
+          --region=us-east4 \
+          --network=vpc1 \
+          --subnet=webapp \
+          --metadata USERNAME=${{vars.DB_USERNAME}},PASSWORD=${{vars.DB_PASSWORD}},DBNAME=${{vars.DB_NAME}},DBHOST=${{vars.DB_HOST}},MAILGUN_API_KEY=${{vars.MAILGUN_API_KEY}},GCP_PROJECT=${{vars.GCP_PROJECT}},PUBSUB_TOPIC=${{vars.PUBSUB_TOPIC}} \
+          --metadata-from-file=startup-script=packer/postgres.sh \
+          --service-account=newuser@devgcp-415101.iam.gserviceaccount.com \
+          --scopes=cloud-platform \
+          --tags=webapp
       
-#     - name: Update Managed Instance Group
-#       run: |
-#         gcloud compute instance-groups managed set-instance-template webapp-igm \
-#           --template=new-webapp-template \
+    - name: Update Managed Instance Group
+      run: |
+          # Assuming the instance group name is consistent and does not need to be randomized
+          gcloud compute instance-groups managed set-instance-template webapp-igm --template=new-webapp-template-${{env.RANDOM_NAME}} --zone=us-east4-a
       
-#     - name: Start Rolling Update
-#       run: |
-#         gcloud compute instance-groups managed rolling-action start-update webapp-igm \
-#           --version=new-webapp-template \
-#           --type=rolling-out-update \
-      
+    - name: Start Rolling Update
+      run: |
+          gcloud compute instance-groups managed rolling-action start-update webapp-igm \
+          --version=template=new-webapp-template-${{env.RANDOM_NAME}} \
+          --zone=us-east4-a
+          
