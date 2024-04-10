@@ -55,12 +55,13 @@ jobs:
       run: |
         RANDOM_NAME=$(uuidgen | tr -d '-' | cut -c1-6)
         echo "Generated random name: $RANDOM_NAME"
+        echo "RANDOM_NAME=$RANDOM_NAME" >> $GITHUB_ENV
         
         
 
     - name: Update Instance Template
       run: |
-          gcloud compute instance-templates create new-webapp-template-$RANDOM_NAME \
+          gcloud compute instance-templates create new-webapp-template-${{env.RANDOM_NAME}} \
           --machine-type=e2-standard-2 \
           --image=${{env.IMAGE_ID}} \
           --region=us-east4 \
@@ -75,12 +76,12 @@ jobs:
     - name: Update Managed Instance Group
       run: |
           # Assuming the instance group name is consistent and does not need to be randomized
-          gcloud compute instance-groups managed set-instance-template webapp-igm --template=new-webapp-template-$RANDOM_NAME --zone=us-east4-a
+          gcloud compute instance-groups managed set-instance-template webapp-igm --template=new-webapp-template-${{env.RANDOM_NAME}} --zone=us-east4-a
       
     - name: Start Rolling Update
       run: |
           gcloud compute instance-groups managed rolling-action start-update web-igm \
-          --version=template=new-webapp-template-$RANDOM_NAME \
+          --version=template=new-webapp-template-${{env.RANDOM_NAME}} \
           --zone=us-east4-a
          
     
