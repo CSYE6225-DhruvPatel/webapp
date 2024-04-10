@@ -24,6 +24,9 @@ jobs:
     - name: Create Repository Zip with .env
       run: zip -r webapp.zip .env *
 
+    - name: Display contents of a .sh file
+      run: cat packer/postgres.sh
+
     - id: 'auth'
       uses: 'google-github-actions/auth@v2'
       with:
@@ -41,16 +44,21 @@ jobs:
     - name: Packer Init
       run: packer init ./packer/gcp.pkr.hcl
 
+    # - name: Build Packer Image
+    #   run: |
+    #     OUTPUT=$(packer build -var 'project_id='${{ secrets.GCP_PROJECT_NAME }} packer/gcp.pkr.hcl)
+    #       IMAGE_ID=$(echo "$OUTPUT" | sed -n 's/.*: \(packer-[0-9]*\)/\1/p')
+    #       echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+
     - name: Build Packer Image
       run: |
-        OUTPUT=$(packer build -var 'project_id='${{ secrets.GCP_PROJECT_NAME }} packer/gcp.pkr.hcl)
-          IMAGE_ID=$(echo "$OUTPUT" | sed -n 's/.*: \(packer-[0-9]*\)/\1/p')
-          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+          echo "IMAGE_ID=packer-1712176956" >> $GITHUB_ENV
     
-    # - name: Generate Random Name
-    #   run: |
-    #       RANDOM_NAME=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 10 | head -n 1)
-    #       echo "Generated random name: $RANDOM_NAME"
+    - name: Generate Random Name
+      run: |
+        RANDOM_NAME=$(uuidgen | tr -d '-')
+        echo "Generated random name: $RANDOM_NAME"
+        
 
     - name: Update Instance Template
       run: |
@@ -78,26 +86,26 @@ jobs:
           --zone=us-east4-a
          
     
-    # - name: Wait for Instance Group Update to Complete
-    #   run: |
-    #     # Use gcloud CLI to check the status of the instance group update
-    #     status=$(gcloud compute instance-groups managed describe webapp-igm --zone=us-east4-a --format='value(status)')
-    #     timeout=600 # 10 minutes.
-    #     elapsed=0
-    #     while [[ "$status" != "UPDATE_STATE_NONE" && "$status" != "UPDATE_STATE_ERROR" ]]; do
-    #       sleep 60
-    #       elapsed=$((elapsed + 60))
-    #       if [ $elapsed -ge $timeout ]; then
-    #         echo "Update timed out, treating as cancelled."
-    #         exit 1
-    #       fi
-    #       status=$(gcloud compute instance-groups managed describe webapp-igm --zone=us-east4-a --format='value(status)')
-    #     done
+    - name: Wait for Instance Group Update to Complete
+      run: |
+        # Use gcloud CLI to check the status of the instance group update
+        status=$(gcloud compute instance-groups managed describe webapp-igm --zone=us-east4-a --format='value(status)')
+        timeout=600 # 10 minutes.
+        elapsed=0
+        while [[ "$status" != "UPDATE_STATE_NONE" && "$status" != "UPDATE_STATE_ERROR" ]]; do
+          sleep 60
+          elapsed=$((elapsed + 60))
+          if [ $elapsed -ge $timeout ]; then
+            echo "Update timed out, treating as cancelled."
+            exit 1
+          fi
+          status=$(gcloud compute instance-groups managed describe webapp-igm --zone=us-east4-a --format='value(status)')
+        done
 
-    #     # Exit with an error if the instance group update failed
-    #     if [ "$status" == "UPDATE_STATE_ERROR" ]; then
-    #       exit 1
-    #     fi
+        # Exit with an error if the instance group update failed
+        if [ "$status" == "UPDATE_STATE_ERROR" ]; then
+          exit 1
+        fi
     
     # runs-on: ubuntu-latest
 
