@@ -94,9 +94,14 @@ jobs:
 
     - name: Build Packer Image
       run: |
-        OUTPUT=$(packer build -var 'project_id='${{ secrets.GCP_PROJECT_NAME }} packer/gcp.pkr.hcl)
-          IMAGE_ID=$(echo "$OUTPUT" | sed -n 's/.*: \(packer-[0-9]*\)/\1/p')
-          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+        OUTPUT=$(packer build -var 'project_id=${{ secrets.GCP_PROJECT_NAME }}' packer/gcp.pkr.hcl)
+        IMAGE_ID=$(echo "$OUTPUT" | sed -n 's/.*: \(packer-[0-9]*\)/\1/p')
+
+        echo "IMAGE_ID: $IMAGE_ID"
+        echo "OUTPUT: $OUTPUT"
+
+        echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+
     
     - name: Generate Random Name
       run: |
@@ -128,4 +133,15 @@ jobs:
           gcloud compute instance-groups managed rolling-action start-update webapp-igm \
           --version=template=new-webapp-template-${{env.RANDOM_NAME}} \
           --zone=us-east4-a
-          
+    
+    - name: Wait for Instance Group Update to Complete
+      run: |
+          # Use gcloud CLI to check the versionTarget.isReached flag
+          is_reached=$(gcloud compute instance-groups managed describe webapp-igm --zone=useast4-a --format='value(versionTarget.isReached)')
+      
+          while [[ "$is_reached" != "True" ]]; do
+            sleep 15
+            is_reached=$(gcloud compute instance-groups managed describe webapp-igm --zone=us-east4-a --format='value(versionTarget.isReached)')
+          done
+
+          echo "Instance group update completed successfully."
