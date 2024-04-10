@@ -53,8 +53,9 @@ jobs:
     
     - name: Generate Random Name
       run: |
-        RANDOM_NAME=$(uuidgen | tr -d '-')
+        RANDOM_NAME=$(uuidgen | tr -d '-' | cut -c1-6)
         echo "Generated random name: $RANDOM_NAME"
+        
         
 
     - name: Update Instance Template
