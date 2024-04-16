@@ -18,7 +18,7 @@ describe('User Routes', () => {
     server.close(done);
   });
 
-  test('POST /v1/user creates a new user', async () => {
+  test('POST /v5/user creates a new user', async () => {
     const userData = {
       first_name: 'abc',
       last_name: 'abc',
@@ -27,7 +27,7 @@ describe('User Routes', () => {
     };
 
     const response = await request(server)
-      .post('/v1/user')
+      .post('/v5/user')
       .send(userData);
 
     //   const insertQuery = `
@@ -51,31 +51,31 @@ describe('User Routes', () => {
     expect(response.status).toBe(400);
   });
 
-  test('GET /v1/user/self retrieves the user profile', async () => {
+  test('GET /v5/user/self retrieves the user profile', async () => {
     const response = await request(server)
-      .get('/v1/user/self')
+      .get('/v5/user/self')
       .set('Authorization', `Basic ${Buffer.from('abc@example.com:abc').toString('base64')}`); 
 
     expect(response.status).toBe(503);
   });
 
-  test('PUT /v1/user/self updates the user profile', async () => {
+  test('PUT /v5/user/self updates the user profile', async () => {
     const updatedUserData = {
       first_name: 'xyz',
       last_name: 'pqr'
     };
 
     const response = await request(server)
-      .put('/v1/user/self')
+      .put('/v5/user/self')
       .set('Authorization', `Basic ${Buffer.from('abc@example.com:abc').toString('base64')}`)
       .send(updatedUserData);
 
     expect(response.status).toBe(503);
   });
 
-  test('GET /v1/user/self retrieves the user profile', async () => {
+  test('GET /v5/user/self retrieves the user profile', async () => {
     const response = await request(server)
-      .get('/v1/user/self')
+      .get('/v5/user/self')
       .set('Authorization', `Basic ${Buffer.from('abc@example.com:abc').toString('base64')}`); 
 
     expect(response.status).toBe(503);

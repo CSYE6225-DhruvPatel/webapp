@@ -136,7 +136,7 @@ jobs:
     
     - name: Check Status
       run: |
-          status=$(gcloud compute instance-groups managed wait-until webapp-igm --region=us-east4 --stable)
+          status=$(gcloud compute instance-groups managed wait-until webapp-igm --zone=us-east4-a --stable)
           echo "Status: $status"
           if [[ $status == "Group is stable" ]]; then
           echo "Refreshed successfully"

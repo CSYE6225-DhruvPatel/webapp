@@ -5,7 +5,7 @@ import emailVerificationRoutes from './verify-email-routes.js';
 export const routes = (app) => {
     app.use('/healthz', healthzRoutes);
 
-    app.use('/v1/user', userRoutes);
+    app.use('/v5/user', userRoutes);
 
     app.use('/verify-email', emailVerificationRoutes);
 
